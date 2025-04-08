@@ -396,17 +396,18 @@
           frameWidth = gifReader.width;
           frameHeight = gifReader.height;
           var canvas = document.createElement('canvas');
-          var ctx = canvas.getContext('2d');
+          // Set willReadFrequently to true for faster readback
+          var ctx = canvas.getContext('2d', { willReadFrequently: true });
           canvas.width = frameWidth;
           canvas.height = frameHeight;
           var tempCanvas = document.createElement('canvas');
-          var tempCtx = tempCanvas.getContext('2d');
+          var tempCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
           tempCanvas.width = frameWidth;
           tempCanvas.height = frameHeight;
           spriteSheetCanvas = document.createElement('canvas');
           spriteSheetCanvas.width = frameWidth * numFrames;
           spriteSheetCanvas.height = frameHeight;
-          var spriteCtx = spriteSheetCanvas.getContext('2d');
+          var spriteCtx = spriteSheetCanvas.getContext('2d', { willReadFrequently: true });
           var prevFrameImageData = ctx.createImageData(frameWidth, frameHeight);
           for (var i = 0; i < numFrames; i++) {
             var frameInfo = gifReader.frameInfo(i);
@@ -449,7 +450,7 @@
     
     // Compress sprite sheet using UPNG.js
     function compressSpriteSheet(spriteCanvas) {
-      var spriteCtx = spriteCanvas.getContext('2d');
+      var spriteCtx = spriteCanvas.getContext('2d', { willReadFrequently: true });
       var spriteImageData = spriteCtx.getImageData(0, 0, spriteCanvas.width, spriteCanvas.height);
       var rgbaArray = spriteImageData.data;
       var framesArray = [rgbaArray.buffer];
@@ -492,7 +493,7 @@
       spriteSheetCanvas = document.createElement('canvas');
       spriteSheetCanvas.width = frameWidth * numFrames;
       spriteSheetCanvas.height = frameHeight;
-      var spriteCtx = spriteSheetCanvas.getContext('2d');
+      var spriteCtx = spriteSheetCanvas.getContext('2d', { willReadFrequently: true });
       var imagesLoaded = 0;
       frameData.forEach(function (frame, index) {
         var img = new Image();
@@ -670,9 +671,9 @@
     }
     
     // Event listeners
-    updateFramesButton.addEventListener("click", initializeFrames);
-    resetFormButton.addEventListener("click", resetForm);
-    numFramesInput.addEventListener("change", initializeFrames);
+    updateFramesButton.addEventListener("click", function () { initializeFrames(); });
+    resetFormButton.addEventListener("click", function () { resetForm(); });
+    numFramesInput.addEventListener("change", function () { initializeFrames(); });
     animationDurationInput.addEventListener("input", function () {
       if (frameData.length > 1) {
         var numFrames = frameData.length;
@@ -694,18 +695,16 @@
         generateSpriteSheetSVG();
       }
     });
-    generateSvgButton.addEventListener("click", generateSVG);
+    generateSvgButton.addEventListener("click", function () { generateSVG(); });
     compressSvgButton.addEventListener("click", function () {
       var svgContent = outputSvg.value;
       setSVGOutput(optimizeSVG(svgContent));
     });
-    copySvgButton.addEventListener("click", function () {
-      copyToClipboard(outputSvg);
-    });
-    downloadSvgButton.addEventListener("click", downloadSVG);
-    copyDataUriButton.addEventListener("click", copyDataUri);
-    batchUploadButton.addEventListener("click", batchUploadImages);
-    uploadGifButton.addEventListener("click", uploadGif);
+    copySvgButton.addEventListener("click", function () { copyToClipboard(outputSvg); });
+    downloadSvgButton.addEventListener("click", function () { downloadSVG(); });
+    copyDataUriButton.addEventListener("click", function () { copyDataUri(); });
+    batchUploadButton.addEventListener("click", function () { batchUploadImages(); });
+    uploadGifButton.addEventListener("click", function () { uploadGif(); });
     
     // Initialize on page load
     initializeFrames();
