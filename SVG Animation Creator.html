@@ -1,56 +1,59 @@
+/*Developed by @jams2blues with love for the Tezos community
+  File: svg-animation-creator.html
+  Summary: Enhanced SVG Animation Creator with advanced optimizations, reset functionality, improved download/copy/Data URI options for fully on-chain NFT artwork.
+*/
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SVG Animation Creator</title>
+  <title>SVG Animation Creator - Advanced</title>
   <style>
+    /* General Styles */
     body {
       background-color: #1e1e1e;
-      color: white;
+      color: #EEE;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 10px;
       box-sizing: border-box;
     }
-
     h1 {
       text-align: center;
       margin-bottom: 20px;
     }
-
     .container {
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
+      padding: 10px;
     }
-
     .section {
       margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #333;
+      border-radius: 4px;
     }
-
     label {
       display: block;
-      margin-bottom: 5px;
+      margin-top: 10px;
+      font-weight: bold;
     }
-
     input[type="number"],
     input[type="text"],
     select,
     textarea {
       width: 100%;
-      max-width: 100%;
       padding: 8px;
       margin-bottom: 10px;
       box-sizing: border-box;
       background-color: #333;
-      color: white;
+      color: #EEE;
       border: none;
+      border-radius: 4px;
     }
-
     input[type="file"] {
       margin-bottom: 10px;
       width: 100%;
     }
-
     button {
       background-color: red;
       color: white;
@@ -59,58 +62,44 @@
       cursor: pointer;
       width: 100%;
       margin-bottom: 5px;
+      border-radius: 4px;
     }
-
-    .frames-list {
-      margin-bottom: 20px;
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
     }
-
     .frame-item {
       border: 1px solid #555;
-      padding: 10px;
+      padding: 8px;
       margin-bottom: 10px;
+      border-radius: 4px;
     }
-
     .frame-item h3 {
       margin-top: 0;
     }
-
-    .frame-item input[type="file"] {
-      width: auto;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .output-section {
-      margin-top: 30px;
-    }
-
-    .preview-section {
-      margin-bottom: 20px;
-    }
-
-    #gif-preview {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-    }
-
     #status-message {
       color: yellow;
       margin-bottom: 10px;
     }
-
     #file-size-info {
       margin-top: 10px;
       font-weight: bold;
     }
+    /* Advanced Options Toggle */
+    .advanced-option {
+      margin-top: 10px;
+    }
   </style>
-  <!-- Include omggif.min.js, pako.min.js, and UPNG.js inline -->
+  <!--
+    IMPORTANT: Paste your minified libraries for omggif.min.js, pako.min.js, and UPNG.js here.
+    For example:
+      <script src="omggif.min.js"></script>
+      <script src="pako.min.js"></script>
+      <script src="UPNG.js"></script>
+    You can also inline the minified code.
+  -->
   <script>
-"use strict";function GifWriter(r,e,t,n){var i=0,a=void 0===(n=void 0===n?{}:n).loop?null:n.loop,o=void 0===n.palette?null:n.palette;if(e<=0||t<=0||e>65535||t>65535)throw new Error("Width/Height invalid.");function f(r){var e=r.length;if(e<2||e>256||e&e-1)throw new Error("Invalid code/color length, must be power of 2 and 2 .. 256.");return e}r[i++]=71,r[i++]=73,r[i++]=70,r[i++]=56,r[i++]=57,r[i++]=97;var l=0,u=0;if(null!==o){for(var h=f(o);h>>=1;)++l;if(h=1<<l,--l,void 0!==n.background){if((u=n.background)>=h)throw new Error("Background index out of range.");if(0===u)throw new Error("Background index explicitly passed as 0.")}}if(r[i++]=255&e,r[i++]=e>>8&255,r[i++]=255&t,r[i++]=t>>8&255,r[i++]=(null!==o?128:0)|l,r[i++]=u,r[i++]=0,null!==o)for(var d=0,s=o.length;d<s;++d){var v=o[d];r[i++]=v>>16&255,r[i++]=v>>8&255,r[i++]=255&v}if(null!==a){if(a<0||a>65535)throw new Error("Loop count invalid.");r[i++]=33,r[i++]=255,r[i++]=11,r[i++]=78,r[i++]=69,r[i++]=84,r[i++]=83,r[i++]=67,r[i++]=65,r[i++]=80,r[i++]=69,r[i++]=50,r[i++]=46,r[i++]=48,r[i++]=3,r[i++]=1,r[i++]=255&a,r[i++]=a>>8&255,r[i++]=0}var c=!1;this.addFrame=function(e,t,n,a,l,u){if(!0===c&&(--i,c=!1),u=void 0===u?{}:u,e<0||t<0||e>65535||t>65535)throw new Error("x/y invalid.");if(n<=0||a<=0||n>65535||a>65535)throw new Error("Width/Height invalid.");if(l.length<n*a)throw new Error("Not enough pixels for the frame size.");var h=!0,d=u.palette;if(null==d&&(h=!1,d=o),null==d)throw new Error("Must supply either a local or global palette.");for(var s=f(d),v=0;s>>=1;)++v;s=1<<v;var w=void 0===u.delay?0:u.delay,p=void 0===u.disposal?0:u.disposal;if(p<0||p>3)throw new Error("Disposal out of range.");var g=!1,x=0;if(void 0!==u.transparent&&null!==u.transparent&&(g=!0,(x=u.transparent)<0||x>=s))throw new Error("Transparent color index.");if((0!==p||g||0!==w)&&(r[i++]=33,r[i++]=249,r[i++]=4,r[i++]=p<<2|(!0===g?1:0),r[i++]=255&w,r[i++]=w>>8&255,r[i++]=x,r[i++]=0),r[i++]=44,r[i++]=255&e,r[i++]=e>>8&255,r[i++]=255&t,r[i++]=t>>8&255,r[i++]=255&n,r[i++]=n>>8&255,r[i++]=255&a,r[i++]=a>>8&255,r[i++]=!0===h?128|v-1:0,!0===h)for(var k=0,b=d.length;k<b;++k){var E=d[k];r[i++]=E>>16&255,r[i++]=E>>8&255,r[i++]=255&E}return i=GifWriterOutputLZWCodeStream(r,i,v<2?2:v,l)},this.end=function(){return!1===c&&(r[i++]=59,c=!0),i},this.getOutputBuffer=function(){return r},this.setOutputBuffer=function(e){r=e},this.getOutputBufferPosition=function(){return i},this.setOutputBufferPosition=function(r){i=r}}function GifWriterOutputLZWCodeStream(r,e,t,n){r[e++]=t;var i=e++,a=1<<t,o=a-1,f=a+1,l=f+1,u=t+1,h=0,d=0;function s(t){for(;h>=t;)r[e++]=255&d,d>>=8,h-=8,e===i+256&&(r[i]=255,i=e++)}function v(r){d|=r<<h,h+=u,s(8)}var c=n[0]&o,w={};v(a);for(var p=1,g=n.length;p<g;++p){var x=n[p]&o,k=c<<8|x,b=w[k];if(void 0===b){for(d|=c<<h,h+=u;h>=8;)r[e++]=255&d,d>>=8,h-=8,e===i+256&&(r[i]=255,i=e++);4096===l?(v(a),l=f+1,u=t+1,w={}):(l>=1<<u&&++u,w[k]=l++),c=x}else c=b}return v(c),v(f),s(1),i+1===e?r[i]=0:(r[i]=e-i-1,r[e++]=0),e}function GifReader(r){var e=0;if(71!==r[e++]||73!==r[e++]||70!==r[e++]||56!==r[e++]||56!=(r[e++]+1&253)||97!==r[e++])throw new Error("Invalid GIF 87a/89a header.");var t=r[e++]|r[e++]<<8,n=r[e++]|r[e++]<<8,i=r[e++],a=i>>7,o=1<<(7&i)+1;r[e++];r[e++];var f=null,l=null;a&&(f=e,l=o,e+=3*o);var u=!0,h=[],d=0,s=null,v=0,c=null;for(this.width=t,this.height=n;u&&e<r.length;)switch(r[e++]){case 33:switch(r[e++]){case 255:if(11!==r[e]||78==r[e+1]&&69==r[e+2]&&84==r[e+3]&&83==r[e+4]&&67==r[e+5]&&65==r[e+6]&&80==r[e+7]&&69==r[e+8]&&50==r[e+9]&&46==r[e+10]&&48==r[e+11]&&3==r[e+12]&&1==r[e+13]&&0==r[e+16])e+=14,c=r[e++]|r[e++]<<8,e++;else for(e+=12;;){if(!((_=r[e++])>=0))throw Error("Invalid block size");if(0===_)break;e+=_}break;case 249:if(4!==r[e++]||0!==r[e+4])throw new Error("Invalid graphics extension block.");var w=r[e++];d=r[e++]|r[e++]<<8,s=r[e++],0==(1&w)&&(s=null),v=w>>2&7,e++;break;case 254:for(;;){if(!((_=r[e++])>=0))throw Error("Invalid block size");if(0===_)break;e+=_}break;default:throw new Error("Unknown graphic control label: 0x"+r[e-1].toString(16))}break;case 44:var p=r[e++]|r[e++]<<8,g=r[e++]|r[e++]<<8,x=r[e++]|r[e++]<<8,k=r[e++]|r[e++]<<8,b=r[e++],E=b>>6&1,m=1<<(7&b)+1,y=f,G=l,I=!1;if(b>>7){I=!0;y=e,G=m,e+=3*m}var W=e;for(e++;;){var _;if(!((_=r[e++])>=0))throw Error("Invalid block size");if(0===_)break;e+=_}h.push({x:p,y:g,width:x,height:k,has_local_palette:I,palette_offset:y,palette_size:G,data_offset:W,data_length:e-W,transparent_index:s,interlaced:!!E,delay:d,disposal:v});break;case 59:u=!1;break;default:throw new Error("Unknown gif block: 0x"+r[e-1].toString(16))}this.numFrames=function(){return h.length},this.loopCount=function(){return c},this.frameInfo=function(r){if(r<0||r>=h.length)throw new Error("Frame index out of range.");return h[r]},this.decodeAndBlitFrameBGRA=function(e,n){var i=this.frameInfo(e),a=i.width*i.height,o=new Uint8Array(a);GifReaderLZWOutputIndexStream(r,i.data_offset,o,a);var f=i.palette_offset,l=i.transparent_index;null===l&&(l=256);var u=i.width,h=t-u,d=u,s=4*(i.y*t+i.x),v=4*((i.y+i.height)*t+i.x),c=s,w=4*h;!0===i.interlaced&&(w+=4*t*7);for(var p=8,g=0,x=o.length;g<x;++g){var k=o[g];if(0===d&&(d=u,(c+=w)>=v&&(w=4*h+4*t*(p-1),c=s+(u+h)*(p<<1),p>>=1)),k===l)c+=4;else{var b=r[f+3*k],E=r[f+3*k+1],m=r[f+3*k+2];n[c++]=m,n[c++]=E,n[c++]=b,n[c++]=255}--d}},this.decodeAndBlitFrameRGBA=function(e,n){var i=this.frameInfo(e),a=i.width*i.height,o=new Uint8Array(a);GifReaderLZWOutputIndexStream(r,i.data_offset,o,a);var f=i.palette_offset,l=i.transparent_index;null===l&&(l=256);var u=i.width,h=t-u,d=u,s=4*(i.y*t+i.x),v=4*((i.y+i.height)*t+i.x),c=s,w=4*h;!0===i.interlaced&&(w+=4*t*7);for(var p=8,g=0,x=o.length;g<x;++g){var k=o[g];if(0===d&&(d=u,(c+=w)>=v&&(w=4*h+4*t*(p-1),c=s+(u+h)*(p<<1),p>>=1)),k===l)c+=4;else{var b=r[f+3*k],E=r[f+3*k+1],m=r[f+3*k+2];n[c++]=b,n[c++]=E,n[c++]=m,n[c++]=255}--d}}}function GifReaderLZWOutputIndexStream(r,e,t,n){for(var i=r[e++],a=1<<i,o=a+1,f=o+1,l=i+1,u=(1<<l)-1,h=0,d=0,s=0,v=r[e++],c=new Int32Array(4096),w=null;;){for(;h<16&&0!==v;)d|=r[e++]<<h,h+=8,1===v?v=r[e++]:--v;if(h<l)break;var p=d&u;if(d>>=l,h-=l,p!==a){if(p===o)break;for(var g=p<f?p:w,x=0,k=g;k>a;)k=c[k]>>8,++x;var b=k;if(s+x+(g!==p?1:0)>n)return void console.log("Warning, gif stream longer than expected.");t[s++]=b;var E=s+=x;for(g!==p&&(t[s++]=b),k=g;x--;)k=c[k],t[--E]=255&k,k>>=8;null!==w&&f<4096&&(c[f++]=w<<8|b,f>=u+1&&l<12&&(++l,u=u<<1|1)),w=p}else f=o+1,u=(1<<(l=i+1))-1,w=null}return s!==n&&console.log("Warning, gif stream shorter than expected."),t}try{exports.GifWriter=GifWriter,exports.GifReader=GifReader}catch(r){}
+    "use strict";function GifWriter(r,e,t,n){var i=0,a=void 0===(n=void 0===n?{}:n).loop?null:n.loop,o=void 0===n.palette?null:n.palette;if(e<=0||t<=0||e>65535||t>65535)throw new Error("Width/Height invalid.");function f(r){var e=r.length;if(e<2||e>256||e&e-1)throw new Error("Invalid code/color length, must be power of 2 and 2 .. 256.");return e}r[i++]=71,r[i++]=73,r[i++]=70,r[i++]=56,r[i++]=57,r[i++]=97;var l=0,u=0;if(null!==o){for(var h=f(o);h>>=1;)++l;if(h=1<<l,--l,void 0!==n.background){if((u=n.background)>=h)throw new Error("Background index out of range.");if(0===u)throw new Error("Background index explicitly passed as 0.")}}if(r[i++]=255&e,r[i++]=e>>8&255,r[i++]=255&t,r[i++]=t>>8&255,r[i++]=(null!==o?128:0)|l,r[i++]=u,r[i++]=0,null!==o)for(var d=0,s=o.length;d<s;++d){var v=o[d];r[i++]=v>>16&255,r[i++]=v>>8&255,r[i++]=255&v}if(null!==a){if(a<0||a>65535)throw new Error("Loop count invalid.");r[i++]=33,r[i++]=255,r[i++]=11,r[i++]=78,r[i++]=69,r[i++]=84,r[i++]=83,r[i++]=67,r[i++]=65,r[i++]=80,r[i++]=69,r[i++]=50,r[i++]=46,r[i++]=48,r[i++]=3,r[i++]=1,r[i++]=255&a,r[i++]=a>>8&255,r[i++]=0}var c=!1;this.addFrame=function(e,t,n,a,l,u){if(!0===c&&(--i,c=!1),u=void 0===u?{}:u,e<0||t<0||e>65535||t>65535)throw new Error("x/y invalid.");if(n<=0||a<=0||n>65535||a>65535)throw new Error("Width/Height invalid.");if(l.length<n*a)throw new Error("Not enough pixels for the frame size.");var h=!0,d=u.palette;if(null==d&&(h=!1,d=o),null==d)throw new Error("Must supply either a local or global palette.");for(var s=f(d),v=0;s>>=1;)++v;s=1<<v;var w=void 0===u.delay?0:u.delay,p=void 0===u.disposal?0:u.disposal;if(p<0||p>3)throw new Error("Disposal out of range.");var g=!1,x=0;if(void 0!==u.transparent&&null!==u.transparent&&(g=!0,(x=u.transparent)<0||x>=s))throw new Error("Transparent color index.");if((0!==p||g||0!==w)&&(r[i++]=33,r[i++]=249,r[i++]=4,r[i++]=p<<2|(!0===g?1:0),r[i++]=255&w,r[i++]=w>>8&255,r[i++]=x,r[i++]=0),r[i++]=44,r[i++]=255&e,r[i++]=e>>8&255,r[i++]=255&t,r[i++]=t>>8&255,r[i++]=255&n,r[i++]=n>>8&255,r[i++]=255&a,r[i++]=a>>8&255,r[i++]=!0===h?128|v-1:0,!0===h)for(var k=0,b=d.length;k<b;++k){var E=d[k];r[i++]=E>>16&255,r[i++]=E>>8&255,r[i++]=255&E}return i=GifWriterOutputLZWCodeStream(r,i,v<2?2:v,l)},this.end=function(){return!1===c&&(r[i++]=59,c=!0),i},this.getOutputBuffer=function(){return r},this.setOutputBuffer=function(e){r=e},this.getOutputBufferPosition=function(){return i},this.setOutputBufferPosition=function(r){i=r}}function GifWriterOutputLZWCodeStream(r,e,t,n){r[e++]=t;var i=e++,a=1<<t,o=a-1,f=a+1,l=f+1,u=t+1,h=0,d=0;function s(t){for(;h>=t;)r[e++]=255&d,d>>=8,h-=8,e===i+256&&(r[i]=255,i=e++)}function v(r){d|=r<<h,h+=u,s(8)}var c=n[0]&o,w={};v(a);for(var p=1,g=n.length;p<g;++p){var x=n[p]&o,k=c<<8|x,b=w[k];if(void 0===b){for(d|=c<<h,h+=u;h>=8;)r[e++]=255&d,d>>=8,h-=8,e===i+256&&(r[i]=255,i=e++);4096===l?(v(a),l=f+1,u=t+1,w={}):(l>=1<<u&&++u,w[k]=l++),c=x}else c=b}return v(c),v(f),s(1),i+1===e?r[i]=0:(r[i]=e-i-1,r[e++]=0),e}function GifReader(r){var e=0;if(71!==r[e++]||73!==r[e++]||70!==r[e++]||56!==r[e++]||56!=(r[e++]+1&253)||97!==r[e++])throw new Error("Invalid GIF 87a/89a header.");var t=r[e++]|r[e++]<<8,n=r[e++]|r[e++]<<8,i=r[e++],a=i>>7,o=1<<(7&i)+1;r[e++];r[e++];var f=null,l=null;a&&(f=e,l=o,e+=3*o);var u=!0,h=[],d=0,s=null,v=0,c=null;for(this.width=t,this.height=n;u&&e<r.length;)switch(r[e++]){case 33:switch(r[e++]){case 255:if(11!==r[e]||78==r[e+1]&&69==r[e+2]&&84==r[e+3]&&83==r[e+4]&&67==r[e+5]&&65==r[e+6]&&80==r[e+7]&&69==r[e+8]&&50==r[e+9]&&46==r[e+10]&&48==r[e+11]&&3==r[e+12]&&1==r[e+13]&&0==r[e+16])e+=14,c=r[e++]|r[e++]<<8,e++;else for(e+=12;;){if(!((_=r[e++])>=0))throw Error("Invalid block size");if(0===_)break;e+=_}break;case 249:if(4!==r[e++]||0!==r[e+4])throw new Error("Invalid graphics extension block.");var w=r[e++];d=r[e++]|r[e++]<<8,s=r[e++],0==(1&w)&&(s=null),v=w>>2&7,e++;break;case 254:for(;;){if(!((_=r[e++])>=0))throw Error("Invalid block size");if(0===_)break;e+=_}break;default:throw new Error("Unknown graphic control label: 0x"+r[e-1].toString(16))}break;case 44:var p=r[e++]|r[e++]<<8,g=r[e++]|r[e++]<<8,x=r[e++]|r[e++]<<8,k=r[e++]|r[e++]<<8,b=r[e++],E=b>>6&1,m=1<<(7&b)+1,y=f,G=l,I=!1;if(b>>7){I=!0;y=e,G=m,e+=3*m}var W=e;for(e++;;){var _;if(!((_=r[e++])>=0))throw Error("Invalid block size");if(0===_)break;e+=_}h.push({x:p,y:g,width:x,height:k,has_local_palette:I,palette_offset:y,palette_size:G,data_offset:W,data_length:e-W,transparent_index:s,interlaced:!!E,delay:d,disposal:v});break;case 59:u=!1;break;default:throw new Error("Unknown gif block: 0x"+r[e-1].toString(16))}this.numFrames=function(){return h.length},this.loopCount=function(){return c},this.frameInfo=function(r){if(r<0||r>=h.length)throw new Error("Frame index out of range.");return h[r]},this.decodeAndBlitFrameBGRA=function(e,n){var i=this.frameInfo(e),a=i.width*i.height,o=new Uint8Array(a);GifReaderLZWOutputIndexStream(r,i.data_offset,o,a);var f=i.palette_offset,l=i.transparent_index;null===l&&(l=256);var u=i.width,h=t-u,d=u,s=4*(i.y*t+i.x),v=4*((i.y+i.height)*t+i.x),c=s,w=4*h;!0===i.interlaced&&(w+=4*t*7);for(var p=8,g=0,x=o.length;g<x;++g){var k=o[g];if(0===d&&(d=u,(c+=w)>=v&&(w=4*h+4*t*(p-1),c=s+(u+h)*(p<<1),p>>=1)),k===l)c+=4;else{var b=r[f+3*k],E=r[f+3*k+1],m=r[f+3*k+2];n[c++]=m,n[c++]=E,n[c++]=b,n[c++]=255}--d}},this.decodeAndBlitFrameRGBA=function(e,n){var i=this.frameInfo(e),a=i.width*i.height,o=new Uint8Array(a);GifReaderLZWOutputIndexStream(r,i.data_offset,o,a);var f=i.palette_offset,l=i.transparent_index;null===l&&(l=256);var u=i.width,h=t-u,d=u,s=4*(i.y*t+i.x),v=4*((i.y+i.height)*t+i.x),c=s,w=4*h;!0===i.interlaced&&(w+=4*t*7);for(var p=8,g=0,x=o.length;g<x;++g){var k=o[g];if(0===d&&(d=u,(c+=w)>=v&&(w=4*h+4*t*(p-1),c=s+(u+h)*(p<<1),p>>=1)),k===l)c+=4;else{var b=r[f+3*k],E=r[f+3*k+1],m=r[f+3*k+2];n[c++]=b,n[c++]=E,n[c++]=m,n[c++]=255}--d}}}function GifReaderLZWOutputIndexStream(r,e,t,n){for(var i=r[e++],a=1<<i,o=a+1,f=o+1,l=i+1,u=(1<<l)-1,h=0,d=0,s=0,v=r[e++],c=new Int32Array(4096),w=null;;){for(;h<16&&0!==v;)d|=r[e++]<<h,h+=8,1===v?v=r[e++]:--v;if(h<l)break;var p=d&u;if(d>>=l,h-=l,p!==a){if(p===o)break;for(var g=p<f?p:w,x=0,k=g;k>a;)k=c[k]>>8,++x;var b=k;if(s+x+(g!==p?1:0)>n)return void console.log("Warning, gif stream longer than expected.");t[s++]=b;var E=s+=x;for(g!==p&&(t[s++]=b),k=g;x--;)k=c[k],t[--E]=255&k,k>>=8;null!==w&&f<4096&&(c[f++]=w<<8|b,f>=u+1&&l<12&&(++l,u=u<<1|1)),w=p}else f=o+1,u=(1<<(l=i+1))-1,w=null}return s!==n&&console.log("Warning, gif stream shorter than expected."),t}try{exports.GifWriter=GifWriter,exports.GifReader=GifReader}catch(r){}
     // [omggif.min.js code]
 
 /*! pako 2.1.0 https://github.com/nodeca/pako @license (MIT AND Zlib) */
@@ -120,93 +109,94 @@
   </script>
 </head>
 <body>
-
   <h1>SVG Animation Creator</h1>
-
-  <!-- Instructions -->
   <div class="container">
+    <!-- Instructions Section -->
     <div class="section">
       <h2>Instructions</h2>
-      <p>Welcome to the SVG Animation Creator! This tool allows you to convert animated GIFs or sequences of images into animated SVG files. These SVG animations are compatible with modern browsers and devices, including iPhone, Android, and desktop platforms.</p>
-      <p><strong>Steps to use the tool:</strong></p>
+      <p>
+        Welcome to the advanced SVG Animation Creator! This tool converts animated GIFs or image sequences into animated SVG files.
+        It’s optimized for NFT artists minting fully on-chain artwork, where every byte counts.
+      </p>
       <ol>
-        <li>Choose your animation settings below, such as the number of frames and animation duration.</li>
-        <li>Upload your frames:
+        <li>Configure the animation settings, including frame count, duration, and advanced optimization options.</li>
+        <li>Upload frames:
           <ul>
-            <li>For animated GIFs, click on "<strong>Upload Animated GIF</strong>" and select your file.</li>
-            <li>For image sequences (e.g., PNGs), click on "<strong>Batch Upload Images</strong>" and select your images in order.</li>
+            <li>For animated GIFs, use the "Upload Animated GIF" button.</li>
+            <li>For image sequences (e.g., PNGs), use the "Batch Upload Images" button.</li>
           </ul>
         </li>
-        <li>Adjust the frame durations if needed.</li>
-        <li>Set the compression level to balance quality and file size.</li>
-        <li>Click on "<strong>Generate SVG</strong>" to create your animated SVG.</li>
-        <li>Preview the animation, and use "<strong>Compress SVG</strong>" to optimize the file size further.</li>
-        <li>You can then copy the SVG code or download it as a file.</li>
+        <li>Optionally adjust individual frame durations if needed.</li>
+        <li>Set the compression level (default is 256 for optimal color reduction) and enable advanced optimization if desired.</li>
+        <li>Generate and preview your SVG animation.</li>
+        <li>Copy the SVG code, download the file, or copy a Data URI for on-chain use.</li>
       </ol>
-      <p><strong>Important:</strong> Before using the SVG for minting NFTs or other purposes, test it across different devices and browsers to ensure compatibility and functionality.</p>
-      <p><strong>Disclaimer:</strong> The tool aims to make it easy for artists to create fully on-chain NFTs without needing to write code. However, always verify the output before final use.</p>
+      <p>
+        <strong>Note:</strong> Always test the final output across various devices and browsers for compatibility.
+      </p>
     </div>
-  </div>
-
-  <div class="container">
     <!-- Settings Section -->
     <div class="section">
       <h2>Animation Settings</h2>
       <label for="num-frames">Number of Frames:</label>
       <input type="number" id="num-frames" min="1" max="200" value="4">
-
+      
       <div id="animation-duration-container">
         <label for="animation-duration">Total Animation Duration (seconds):</label>
         <input type="number" id="animation-duration" min="0.1" step="0.1" value="3">
       </div>
-
-      <label for="scaling">Scaling:</label>
+      
+      <label for="scaling">Scaling Mode:</label>
       <select id="scaling">
         <option value="pixelated">Pixelated (Best for pixel art)</option>
         <option value="auto">Smooth</option>
       </select>
-
-      <!-- Compression Level Input -->
+      
       <label for="compression-level">Compression Level (Number of Colors):</label>
-      <input type="number" id="compression-level" min="2" max="256" step="1" value="64">
-
+      <input type="number" id="compression-level" min="2" max="256" step="1" value="256">
+      
+      <!-- Advanced Optimization Toggle -->
+      <div class="advanced-option">
+        <input type="checkbox" id="advanced-opt" />
+        <label for="advanced-opt">Enable Advanced SVG Optimization</label>
+      </div>
+      
+      <!-- Reset Form Button -->
+      <button id="reset-form">Reset Form</button>
       <button id="update-frames">Update Frames</button>
     </div>
-
     <!-- Frames Upload Section -->
     <div class="section">
       <h2>Frame Uploads and Timing</h2>
       <button id="batch-upload">Batch Upload Images</button>
       <button id="upload-gif">Upload Animated GIF</button>
-      <div id="frames-list" class="frames-list">
-        <!-- Frame items will be generated here -->
-      </div>
+      <div id="frames-list"></div>
     </div>
-
     <!-- Output Section -->
     <div class="section output-section">
       <h2>Generated SVG Code</h2>
       <div id="status-message"></div>
       <textarea id="output-svg" rows="15" placeholder="Your generated SVG code will appear here..." readonly></textarea>
       <button id="generate-svg">Generate SVG</button>
-      <button id="compress-svg" disabled>Compress SVG</button>
+      <button id="compress-svg" disabled>Optimize/Compress SVG</button>
       <button id="copy-svg" disabled>Copy SVG Code</button>
       <button id="download-svg" disabled>Download SVG File</button>
-      <!-- File Size Info -->
+      <button id="copy-datauri" disabled>Copy Data URI</button>
       <div id="file-size-info"></div>
-      <!-- Add Preview Container -->
-      <div id="preview-container" style="margin-top: 20px;">
-        <!-- SVG preview will be injected here -->
-      </div>
+      <div id="preview-container" style="margin-top: 20px;"></div>
     </div>
   </div>
-  <script>
-    // Variables
+  <!-- Use type="module" to support modern syntax; @ts-nocheck ensures no type errors are raised -->
+  <script type="module">
+    // @ts-nocheck
+    // Variables and state
     const numFramesInput = document.getElementById('num-frames');
     const animationDurationInput = document.getElementById('animation-duration');
     const animationDurationContainer = document.getElementById('animation-duration-container');
     const scalingSelect = document.getElementById('scaling');
     const compressionLevelInput = document.getElementById('compression-level');
+    const advancedOptCheckbox = document.getElementById('advanced-opt');
+    const resetFormButton = document.getElementById('reset-form');
     const updateFramesButton = document.getElementById('update-frames');
     const framesList = document.getElementById('frames-list');
     const outputSvg = document.getElementById('output-svg');
@@ -214,22 +204,21 @@
     const compressSvgButton = document.getElementById('compress-svg');
     const copySvgButton = document.getElementById('copy-svg');
     const downloadSvgButton = document.getElementById('download-svg');
+    const copyDataUriButton = document.getElementById('copy-datauri');
     const batchUploadButton = document.getElementById('batch-upload');
     const uploadGifButton = document.getElementById('upload-gif');
     const statusMessage = document.getElementById('status-message');
     const previewContainer = document.getElementById('preview-container');
     const fileSizeInfo = document.getElementById('file-size-info');
-
+    
     let frameData = [];
     let isUsingSpriteSheet = false;
-    let spriteSheetData = null;
-    let spriteSheetMimeType = null;
     let spriteSheetDataURL = null;
     let frameWidth = 0;
     let frameHeight = 0;
-    let spriteSheetCanvas = null; // Global reference to the sprite sheet canvas
-
-    // Initialize frames
+    let spriteSheetCanvas = null;
+    
+    // Initialize/reset frames UI
     function initializeFrames() {
       framesList.innerHTML = '';
       frameData = [];
@@ -237,54 +226,42 @@
       spriteSheetCanvas = null;
       const numFrames = parseInt(numFramesInput.value);
       const defaultDuration = numFrames > 1 ? (parseFloat(animationDurationInput.value) / numFrames).toFixed(2) : 0.0001;
-
-      // Hide or show animation duration inputs based on number of frames
-      if (numFrames === 1) {
-        animationDurationContainer.style.display = 'none';
-      } else {
-        animationDurationContainer.style.display = '';
-      }
-
+      animationDurationContainer.style.display = numFrames === 1 ? 'none' : '';
       for (let i = 0; i < numFrames; i++) {
         addFrame(i + 1, defaultDuration);
       }
-
-      // Disable SVG output buttons until SVG is generated
       outputSvg.value = '';
       copySvgButton.disabled = true;
       downloadSvgButton.disabled = true;
       compressSvgButton.disabled = true;
-
-      // Clear status message and preview
+      copyDataUriButton.disabled = true;
       statusMessage.textContent = '';
       previewContainer.innerHTML = '';
       fileSizeInfo.textContent = '';
     }
-
-    // Add a frame item
+    
+    // Add a single frame UI element
     function addFrame(frameNumber, defaultDuration) {
       const frameItem = document.createElement('div');
       frameItem.className = 'frame-item';
-
       const frameTitle = document.createElement('h3');
       frameTitle.textContent = 'Frame ' + frameNumber;
       frameItem.appendChild(frameTitle);
-
+      
       const fileLabel = document.createElement('label');
       fileLabel.textContent = 'Upload Image:';
       frameItem.appendChild(fileLabel);
-
+      
       const fileInput = document.createElement('input');
       fileInput.type = 'file';
       fileInput.accept = 'image/*';
       fileInput.dataset.frameIndex = frameNumber - 1;
       frameItem.appendChild(fileInput);
-
+      
       if (parseInt(numFramesInput.value) > 1) {
         const durationLabel = document.createElement('label');
         durationLabel.textContent = 'Frame Duration (seconds):';
         frameItem.appendChild(durationLabel);
-
         const durationInput = document.createElement('input');
         durationInput.type = 'number';
         durationInput.min = '0.01';
@@ -292,119 +269,83 @@
         durationInput.value = defaultDuration;
         durationInput.dataset.frameIndex = frameNumber - 1;
         frameItem.appendChild(durationInput);
-
-        frameData.push({
-          imageData: null,
-          mimeType: null,
-          duration: parseFloat(durationInput.value)
+        frameData.push({ imageData: null, mimeType: null, duration: parseFloat(durationInput.value) });
+        durationInput.addEventListener('input', function (event) {
+          var frameIndex = event.target.dataset.frameIndex;
+          frameData[frameIndex].duration = parseFloat(event.target.value);
         });
-
-        durationInput.addEventListener('input', handleDurationChange);
       } else {
-        frameData.push({
-          imageData: null,
-          mimeType: null,
-          duration: parseFloat(defaultDuration)
-        });
+        frameData.push({ imageData: null, mimeType: null, duration: parseFloat(defaultDuration) });
       }
-
+      
       framesList.appendChild(frameItem);
-
-      // Event listeners
-      fileInput.addEventListener('change', handleFileUpload);
+      fileInput.addEventListener('change', function (event) {
+        var frameIndex = event.target.dataset.frameIndex;
+        var file = event.target.files[0];
+        if (file) {
+          var reader = new FileReader();
+          reader.onloadend = function () {
+            var mimeTypeMatch = reader.result.match(/^data:(image\/[^;]+);base64,/);
+            if (mimeTypeMatch) {
+              var mimeType = mimeTypeMatch[1];
+              var base64String = reader.result.replace(/^data:image\/[^;]+;base64,/, '');
+              frameData[frameIndex].imageData = base64String;
+              frameData[frameIndex].mimeType = mimeType;
+              frameData[frameIndex].file = file;
+              var img = new Image();
+              img.onload = function () {
+                frameWidth = img.width;
+                frameHeight = img.height;
+              };
+              img.src = reader.result;
+            } else {
+              alert('Unsupported image format. Please upload a valid image.');
+              frameData[frameIndex].imageData = null;
+            }
+          };
+          reader.readAsDataURL(file);
+        } else {
+          frameData[frameIndex].imageData = null;
+        }
+      });
     }
-
-    // Handle file upload
-    function handleFileUpload(event) {
-      const frameIndex = event.target.dataset.frameIndex;
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = function () {
-          // Extract the MIME type from the data URL
-          const mimeTypeMatch = reader.result.match(/^data:(image\/[^;]+);base64,/);
-          if (mimeTypeMatch) {
-            const mimeType = mimeTypeMatch[1];
-            const base64String = reader.result.replace(/^data:image\/[^;]+;base64,/, '');
-            frameData[frameIndex].imageData = base64String;
-            frameData[frameIndex].mimeType = mimeType;
-            frameData[frameIndex].file = file;
-
-            // Set frame dimensions if not already set
-            const img = new Image();
-            img.onload = function () {
-              frameWidth = img.width;
-              frameHeight = img.height;
-            };
-            img.src = reader.result;
-          } else {
-            alert('Unsupported image format. Please upload a valid image.');
-            frameData[frameIndex].imageData = null;
-          }
-        };
-        reader.readAsDataURL(file);
-      } else {
-        frameData[frameIndex].imageData = null;
-      }
-    }
-
-    // Handle duration change
-    function handleDurationChange(event) {
-      const frameIndex = event.target.dataset.frameIndex;
-      frameData[frameIndex].duration = parseFloat(event.target.value);
-    }
-
-    // Batch Upload Function
+    
+    // Batch upload for image sequence
     function batchUploadImages() {
-      const fileInput = document.createElement('input');
+      var fileInput = document.createElement('input');
       fileInput.type = 'file';
       fileInput.accept = 'image/*';
       fileInput.multiple = true;
       fileInput.addEventListener('change', function (event) {
-        const files = Array.from(event.target.files);
-
-        if (files.length === 0) {
-          return;
-        }
-
-        // Check if any GIF files are uploaded
-        const gifFiles = files.filter(file => file.type === 'image/gif');
+        var files = Array.from(event.target.files);
+        if (files.length === 0) return;
+        var gifFiles = files.filter(function (file) { return file.type === 'image/gif'; });
         if (gifFiles.length > 0) {
           alert('Please use the "Upload Animated GIF" button for GIF files.');
           return;
         }
-
-        // Sort files by name
-        files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
-
-        // Update number of frames
+        files.sort(function (a, b) {
+          return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
+        });
         numFramesInput.value = files.length;
         initializeFrames();
-
-        const defaultDuration = files.length > 1 ? (parseFloat(animationDurationInput.value) / files.length).toFixed(2) : 0.0001;
-
-        files.forEach((file, index) => {
-          const reader = new FileReader();
+        var defaultDuration = files.length > 1 ? (parseFloat(animationDurationInput.value) / files.length).toFixed(2) : 0.0001;
+        files.forEach(function (file, index) {
+          var reader = new FileReader();
           reader.onloadend = function () {
-            const mimeTypeMatch = reader.result.match(/^data:(image\/[^;]+);base64,/);
+            var mimeTypeMatch = reader.result.match(/^data:(image\/[^;]+);base64,/);
             if (mimeTypeMatch) {
-              const mimeType = mimeTypeMatch[1];
-              const base64String = reader.result.replace(/^data:image\/[^;]+;base64,/, '');
+              var mimeType = mimeTypeMatch[1];
+              var base64String = reader.result.replace(/^data:image\/[^;]+;base64,/, '');
               frameData[index].imageData = base64String;
               frameData[index].mimeType = mimeType;
               frameData[index].file = file;
-
               if (defaultDuration !== null) {
                 frameData[index].duration = parseFloat(defaultDuration);
-                // Update duration inputs
-                const durationInput = document.querySelector(`.frame-item:nth-child(${index + 1}) input[type="number"]`);
-                if (durationInput) {
-                  durationInput.value = defaultDuration;
-                }
+                var durationInput = document.querySelector(".frame-item:nth-child(" + (index + 1) + ") input[type='number']");
+                if (durationInput) { durationInput.value = defaultDuration; }
               }
-
-              // Set frame dimensions if not already set
-              const img = new Image();
+              var img = new Image();
               img.onload = function () {
                 frameWidth = img.width;
                 frameHeight = img.height;
@@ -416,485 +357,358 @@
             }
           };
           reader.readAsDataURL(file);
-
-          // Update file input display
-          const fileInputElement = document.querySelector(`.frame-item:nth-child(${index + 1}) input[type="file"]`);
+          var fileInputElement = document.querySelector(".frame-item:nth-child(" + (index + 1) + ") input[type='file']");
           if (fileInputElement) {
-            const dataTransfer = new DataTransfer();
+            var dataTransfer = new DataTransfer();
             dataTransfer.items.add(file);
             fileInputElement.files = dataTransfer.files;
           }
         });
       });
-
       fileInput.click();
     }
-
-    // Upload GIF Function
+    
+    // Upload Animated GIF
     function uploadGif() {
-      const fileInput = document.createElement('input');
+      var fileInput = document.createElement('input');
       fileInput.type = 'file';
       fileInput.accept = 'image/gif';
       fileInput.addEventListener('change', function (event) {
-        const file = event.target.files[0];
-
-        if (file) {
-          processAnimatedGif(file);
-        }
+        var file = event.target.files[0];
+        if (file) { processAnimatedGif(file); }
       });
-
       fileInput.click();
     }
-
-    // Process Animated GIF
+    
+    // Process animated GIF using omggif
     function processAnimatedGif(gifFile) {
       statusMessage.textContent = 'Processing GIF, please wait...';
-
-      const reader = new FileReader();
-      reader.onload = function(event) {
+      var reader = new FileReader();
+      reader.onload = function (event) {
         try {
-          const arrayBuffer = event.target.result;
-          const gifData = new Uint8Array(arrayBuffer);
-          const gifReader = new GifReader(gifData);
-
-          const numFrames = gifReader.numFrames();
+          var arrayBuffer = event.target.result;
+          var gifData = new Uint8Array(arrayBuffer);
+          var gifReader = new GifReader(gifData);
+          var numFrames = gifReader.numFrames();
           numFramesInput.value = numFrames;
           initializeFrames();
-
           frameData = [];
-
           frameWidth = gifReader.width;
           frameHeight = gifReader.height;
-
-          // Create a canvas to render frames
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
+          var canvas = document.createElement('canvas');
+          var ctx = canvas.getContext('2d');
           canvas.width = frameWidth;
           canvas.height = frameHeight;
-
-          // Initialize a temporary canvas to store previous frame state
-          const tempCanvas = document.createElement('canvas');
-          const tempCtx = tempCanvas.getContext('2d');
+          var tempCanvas = document.createElement('canvas');
+          var tempCtx = tempCanvas.getContext('2d');
           tempCanvas.width = frameWidth;
           tempCanvas.height = frameHeight;
-
-          // Create an off-screen canvas for the sprite sheet
           spriteSheetCanvas = document.createElement('canvas');
           spriteSheetCanvas.width = frameWidth * numFrames;
           spriteSheetCanvas.height = frameHeight;
-          const spriteCtx = spriteSheetCanvas.getContext('2d');
-
-          let cumulativeTime = 0;
-
-          // Initialize previous frame disposal info
-          let prevFrameImageData = ctx.createImageData(frameWidth, frameHeight);
-
-          for (let i = 0; i < numFrames; i++) {
-            const frameInfo = gifReader.frameInfo(i);
-            const disposal = frameInfo.disposal;
-
-            // Save current canvas state before rendering the frame
+          var spriteCtx = spriteSheetCanvas.getContext('2d');
+          var prevFrameImageData = ctx.createImageData(frameWidth, frameHeight);
+          for (var i = 0; i < numFrames; i++) {
+            var frameInfo = gifReader.frameInfo(i);
+            var disposal = frameInfo.disposal;
             tempCtx.putImageData(ctx.getImageData(0, 0, frameWidth, frameHeight), 0, 0);
-
-            const imageData = ctx.getImageData(0, 0, frameWidth, frameHeight);
+            var imageData = ctx.getImageData(0, 0, frameWidth, frameHeight);
             gifReader.decodeAndBlitFrameRGBA(i, imageData.data);
             ctx.putImageData(imageData, 0, 0);
-
-            // Draw frame onto sprite sheet
             spriteCtx.drawImage(canvas, frameWidth * i, 0);
-
-            // Extract frame duration in milliseconds
-            const durationMs = (frameInfo.delay || 10) * 10; // delay is in hundredths of a second
-            const duration = durationMs / 1000; // Convert to seconds
-
-            frameData.push({
-              filename: `frame_${i}.png`,
-              frame: {
-                x: frameWidth * i,
-                y: 0,
-                w: frameWidth,
-                h: frameHeight
-              },
-              duration: duration
-            });
-
-            // Update duration inputs in the UI
-            const frameItem = framesList.children[i];
-            const durationInput = frameItem.querySelector('input[type="number"]');
+            var durationMs = (frameInfo.delay || 10) * 10;
+            var duration = durationMs / 1000;
+            frameData.push({ filename: 'frame_' + i + '.png', frame: { x: frameWidth * i, y: 0, w: frameWidth, h: frameHeight }, duration: duration });
+            var frameItem = framesList.children[i];
+            var durationInput = frameItem.querySelector("input[type='number']");
             if (durationInput) {
               durationInput.value = duration.toFixed(2);
               frameData[i].duration = duration;
             }
-
-            // Handle disposal method
             switch (disposal) {
-              case 2: // Restore to background color (transparent)
+              case 2:
                 ctx.clearRect(frameInfo.x, frameInfo.y, frameInfo.width, frameInfo.height);
                 break;
-              case 3: // Restore to previous
+              case 3:
                 ctx.putImageData(prevFrameImageData, 0, 0);
                 break;
-              // Cases 0 and 1: Do not dispose (leave as is)
             }
-
-            // Save current frame state for potential restoration
             prevFrameImageData = ctx.getImageData(0, 0, frameWidth, frameHeight);
           }
-
-          // Compress the sprite sheet
           compressSpriteSheet(spriteSheetCanvas);
-
           isUsingSpriteSheet = true;
-
-          // Clean up
           canvas.remove();
           tempCanvas.remove();
-
-          statusMessage.textContent = 'GIF uploaded and processed successfully.';
+          statusMessage.textContent = 'GIF processed successfully.';
         } catch (error) {
           statusMessage.textContent = 'Error processing GIF: ' + error.message;
         }
       };
-
       reader.readAsArrayBuffer(gifFile);
     }
-
-    // Compress the sprite sheet using UPNG.js
+    
+    // Compress sprite sheet using UPNG.js
     function compressSpriteSheet(spriteCanvas) {
-      const spriteCtx = spriteCanvas.getContext('2d');
-      // Get the pixel data from the spriteCanvas
-      const spriteImageData = spriteCtx.getImageData(0, 0, spriteCanvas.width, spriteCanvas.height);
-      const rgbaArray = spriteImageData.data;
-
-      // Convert RGBA data to UPNG.js format
-      const framesArray = [rgbaArray.buffer]; // UPNG.js expects an array of frame buffers
-      const width = spriteCanvas.width;
-      const height = spriteCanvas.height;
-
-      // Compression options
-      const cnum = parseInt(compressionLevelInput.value) || 256; // Get value from input, default to 256
-      const options = {
-        cnum: cnum // Number of colors
-      };
-
-      // Compress using UPNG.js
-      const compressedPNG = UPNG.encode(framesArray, width, height, 0, [], options);
-
-      // Convert the compressed PNG to a Base64 data URL
-      const compressedPNGBase64 = arrayBufferToBase64(compressedPNG);
+      var spriteCtx = spriteCanvas.getContext('2d');
+      var spriteImageData = spriteCtx.getImageData(0, 0, spriteCanvas.width, spriteCanvas.height);
+      var rgbaArray = spriteImageData.data;
+      var framesArray = [rgbaArray.buffer];
+      var width = spriteCanvas.width;
+      var height = spriteCanvas.height;
+      var cnum = parseInt(compressionLevelInput.value) || 256;
+      var options = { cnum: cnum };
+      var compressedPNG = UPNG.encode(framesArray, width, height, 0, [], options);
+      var compressedPNGBase64 = arrayBufferToBase64(compressedPNG);
       spriteSheetDataURL = 'data:image/png;base64,' + compressedPNGBase64;
-
-      spriteSheetMimeType = 'image/png';
-      spriteSheetData = compressedPNGBase64;
     }
-
-    // Helper function to convert ArrayBuffer to Base64
+    
+    // Convert ArrayBuffer to Base64
     function arrayBufferToBase64(buffer) {
-      let binary = '';
-      const bytes = new Uint8Array(buffer);
-      const len = bytes.byteLength;
-      for (let i = 0; i < len; i++) {
+      var binary = '';
+      var bytes = new Uint8Array(buffer);
+      for (var i = 0, len = bytes.byteLength; i < len; i++) {
         binary += String.fromCharCode(bytes[i]);
       }
       return btoa(binary);
     }
-
-    // Generate SVG
+    
+    // Generate SVG output
     function generateSVG() {
       if (isUsingSpriteSheet) {
         generateSpriteSheetSVG();
         return;
       }
-
-      // Check if all frames have image data
-      const allFramesUploaded = frameData.every(frame => frame.imageData !== null);
+      var allFramesUploaded = frameData.every(function (frame) { return frame.imageData !== null; });
       if (!allFramesUploaded) {
         alert('Please upload images for all frames before generating the SVG.');
         return;
       }
-
-      // Create a sprite sheet from the uploaded images
       createSpriteSheetFromImages();
     }
-
-    // Create sprite sheet from uploaded images
+    
+    // Create sprite sheet from individual images
     function createSpriteSheetFromImages() {
-      const numFrames = frameData.length;
-
-      // Create an off-screen canvas for the sprite sheet
+      var numFrames = frameData.length;
       spriteSheetCanvas = document.createElement('canvas');
       spriteSheetCanvas.width = frameWidth * numFrames;
       spriteSheetCanvas.height = frameHeight;
-      const spriteCtx = spriteSheetCanvas.getContext('2d');
-
-      let imagesLoaded = 0;
-
-      // Draw each frame onto the sprite sheet
-      frameData.forEach((frame, index) => {
-        const img = new Image();
+      var spriteCtx = spriteSheetCanvas.getContext('2d');
+      var imagesLoaded = 0;
+      frameData.forEach(function (frame, index) {
+        var img = new Image();
         img.onload = function () {
           spriteCtx.drawImage(img, frameWidth * index, 0);
-
-          // Add frame position data to frameData
-          frameData[index].frame = {
-            x: frameWidth * index,
-            y: 0,
-            w: frameWidth,
-            h: frameHeight
-          };
-
+          frameData[index].frame = { x: frameWidth * index, y: 0, w: frameWidth, h: frameHeight };
           imagesLoaded++;
-          // After drawing all frames, compress the sprite sheet and generate SVG
           if (imagesLoaded === frameData.length) {
-            // Compress the sprite sheet
             compressSpriteSheet(spriteSheetCanvas);
-
             isUsingSpriteSheet = true;
-
-            // Proceed to generate the SVG
             generateSpriteSheetSVG();
           }
         };
         img.src = 'data:' + frame.mimeType + ';base64,' + frame.imageData;
       });
     }
-
-    // Generate SVG with Sprite Sheet
+    
+    // Generate the SVG using the sprite sheet and frame timing
     function generateSpriteSheetSVG() {
-      const scaling = scalingSelect.value;
-      const numFrames = frameData.length;
-
-      // Calculate total duration in seconds
-      let totalDuration = frameData.reduce((sum, frame) => sum + (frame.duration || 0), 0);
-
-      // Check for single frame or zero total duration
+      var scaling = scalingSelect.value;
+      var numFrames = frameData.length;
+      var totalDuration = frameData.reduce(function (sum, frame) { return sum + (frame.duration || 0); }, 0);
       if (numFrames === 1 || totalDuration <= 0) {
-        // Handle single frame case
-        const attributeName = 'x';
-        totalDuration = 0.0001; // Minimal duration
-
-        const imageWidth = frameWidth;
-        const imageHeight = frameHeight;
-
-        const svgContent = `<svg xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 ${frameWidth} ${frameHeight}"
-            width="100%"
-            height="100%"
-            preserveAspectRatio="xMidYMid meet"
-            overflow="hidden">
-          <image href="${spriteSheetDataURL}" width="${imageWidth}" height="${imageHeight}"
-            style="image-rendering: ${scaling};" x="0" y="0">
-            <animate attributeName="${attributeName}"
-              values="0;0"
-              keyTimes="0;1.0000"
-              calcMode="discrete"
-              dur="${totalDuration.toFixed(4)}s"
-              repeatCount="indefinite" />
-          </image>
-        </svg>`;
-
-        outputSvg.value = svgContent.trim();
-        copySvgButton.disabled = false;
-        downloadSvgButton.disabled = false;
-        compressSvgButton.disabled = false;
-
-        // Update the preview
-        previewContainer.innerHTML = svgContent;
-
-        // Update file size info
-        updateFileSizeInfo(svgContent);
-
+        totalDuration = 0.0001;
+        var svgContent = '<svg xmlns="http://www.w3.org/2000/svg"\n' +
+             '             viewBox="0 0 ' + frameWidth + ' ' + frameHeight + '"\n' +
+             '             width="100%"\n' +
+             '             height="100%"\n' +
+             '             preserveAspectRatio="xMidYMid meet"\n' +
+             '             overflow="hidden">\n' +
+             '          <image href="' + spriteSheetDataURL + '" width="' + frameWidth + '" height="' + frameHeight + '"\n' +
+             '             style="image-rendering: ' + scaling + ';" x="0" y="0">\n' +
+             '            <animate attributeName="x"\n' +
+             '               values="0;0"\n' +
+             '               keyTimes="0;1.0000"\n' +
+             '               calcMode="discrete"\n' +
+             '               dur="' + totalDuration.toFixed(4) + 's"\n' +
+             '               repeatCount="indefinite" />\n' +
+             '          </image>\n' +
+             '        </svg>';
+        setSVGOutput(svgContent);
         return;
       }
-
-      // Proceed with multiple frames as before
-
-      // Generate cumulative start times for each frame
-      let cumulativeTime = 0;
-      const framesWithTimes = frameData.map(frame => {
-        const startTime = cumulativeTime; // in seconds
+      var cumulativeTime = 0;
+      var framesWithTimes = frameData.map(function (frame) {
+        var startTime = cumulativeTime;
         cumulativeTime += frame.duration;
-        return { ...frame, startTime };
+        return Object.assign({}, frame, { startTime: startTime });
       });
-
-      // Generate 'keyTimes' array
-      const keyTimes = framesWithTimes.map(frame => (frame.startTime / totalDuration).toFixed(4));
-      keyTimes.push('1.0000'); // Ensure the last keyTime is 1.0000
-      const keyTimesString = keyTimes.join(';');
-
-      // Prepare the 'values' array
-      const framePositions = framesWithTimes.map(frame => -frame.frame.x);
-      framePositions.push(-framesWithTimes[0].frame.x); // Loop back to first frame
-      const valuesString = framePositions.join(';');
-
-      const imageWidth = frameWidth * numFrames;
-      const imageHeight = frameHeight;
-      const attributeName = 'x';
-
-      // Set width and height to '100%' for responsive scaling
-      const svgContent = `<svg xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 ${frameWidth} ${frameHeight}"
-          width="100%"
-          height="100%"
-          preserveAspectRatio="xMidYMid meet"
-          overflow="hidden">
-        <!-- Define clipPath to ensure only one frame is visible -->
-        <defs>
-          <clipPath id="frameClip">
-            <rect width="${frameWidth}" height="${frameHeight}" />
-          </clipPath>
-        </defs>
-
-        <!-- Add the sprite sheet image with clipPath applied -->
-        <image id="sprite" href="${spriteSheetDataURL}" width="${imageWidth}" height="${imageHeight}" clip-path="url(#frameClip)"
-          style="image-rendering: ${scaling};" x="0" y="0">
-          <!-- Generate animate tag for cycling through frames -->
-          <animate attributeName="${attributeName}"
-            values="${valuesString}"
-            keyTimes="${keyTimesString}"
-            calcMode="discrete"
-            dur="${totalDuration.toFixed(4)}s"
-            repeatCount="indefinite" />
-        </image>
-      </svg>`;
-
-      outputSvg.value = svgContent.trim();
+      var keyTimes = framesWithTimes.map(function (frame) { return (frame.startTime / totalDuration).toFixed(4); });
+      keyTimes.push("1.0000");
+      var keyTimesString = keyTimes.join(";");
+      var framePositions = framesWithTimes.map(function (frame) { return -frame.frame.x; });
+      framePositions.push(-framesWithTimes[0].frame.x);
+      var valuesString = framePositions.join(";");
+      var svgContent = '<svg xmlns="http://www.w3.org/2000/svg"\n' +
+            '            viewBox="0 0 ' + frameWidth + ' ' + frameHeight + '"\n' +
+            '            width="100%"\n' +
+            '            height="100%"\n' +
+            '            preserveAspectRatio="xMidYMid meet"\n' +
+            '            overflow="hidden">\n' +
+            '       <defs>\n' +
+            '         <clipPath id="frameClip">\n' +
+            '           <rect width="' + frameWidth + '" height="' + frameHeight + '" />\n' +
+            '         </clipPath>\n' +
+            '       </defs>\n' +
+            '       <image id="sprite" href="' + spriteSheetDataURL + '" width="' + (frameWidth * numFrames) + '" height="' + frameHeight + '" clip-path="url(#frameClip)"\n' +
+            '            style="image-rendering: ' + scaling + ';" x="0" y="0">\n' +
+            '         <animate attributeName="x"\n' +
+            '            values="' + valuesString + '"\n' +
+            '            keyTimes="' + keyTimesString + '"\n' +
+            '            calcMode="discrete"\n' +
+            '            dur="' + totalDuration.toFixed(4) + 's"\n' +
+            '            repeatCount="indefinite" />\n' +
+            '       </image>\n' +
+            '     </svg>';
+      setSVGOutput(svgContent);
+    }
+    
+    // Set SVG output and update UI
+    function setSVGOutput(svgContent) {
+      var optimizedSVG = svgContent;
+      if (advancedOptCheckbox.checked) {
+        optimizedSVG = optimizeSVG(svgContent);
+      }
+      outputSvg.value = optimizedSVG.trim();
       copySvgButton.disabled = false;
       downloadSvgButton.disabled = false;
       compressSvgButton.disabled = false;
-
-      // Update the preview
-      previewContainer.innerHTML = svgContent;
-
-      // Update file size info
-      updateFileSizeInfo(svgContent);
+      copyDataUriButton.disabled = false;
+      previewContainer.innerHTML = optimizedSVG;
+      updateFileSizeInfo(optimizedSVG);
     }
-
-    // Compress SVG Function
-    function compressSVG() {
-      let svgContent = outputSvg.value;
-
-      // Preserve href attributes (Base64 data) and animate tags
-      const hrefMatches = [];
-      svgContent = svgContent.replace(/href="[^"]*"/g, function (match) {
+    
+    // Advanced SVG optimization function
+    function optimizeSVG(svgContent) {
+      var optimized = svgContent;
+      var hrefMatches = [];
+      optimized = optimized.replace(/href="[^"]*"/g, function (match) {
         hrefMatches.push(match);
-        return `___HREF_PLACEHOLDER_${hrefMatches.length - 1}___`;
+        return "___HREF_PLACEHOLDER_" + (hrefMatches.length - 1) + "___";
       });
-
-      const animateMatches = [];
-      svgContent = svgContent.replace(/<animate[\s\S]*?<\/animate>/g, function (match) {
+      var animateMatches = [];
+      optimized = optimized.replace(/<animate[\s\S]*?<\/animate>/g, function (match) {
         animateMatches.push(match);
-        return `___ANIMATE_PLACEHOLDER_${animateMatches.length - 1}___`;
+        return "___ANIMATE_PLACEHOLDER_" + (animateMatches.length - 1) + "___";
       });
-
-      // Remove comments and unnecessary whitespace outside of quotes
-      svgContent = svgContent.replace(/>\s+</g, '><').trim();
-      svgContent = svgContent.replace(/<!--[\s\S]*?-->/g, '');
-
-      // Remove line breaks and tabs outside of quotes
-      svgContent = svgContent.replace(/[\r\n\t]+/g, '');
-
-      // Remove multiple spaces outside of quotes
-      svgContent = svgContent.replace(/ {2,}/g, ' ');
-
-      // Remove XML declarations and DOCTYPE
-      svgContent = svgContent.replace(/<\?xml[\s\S]*?\?>/gi, '');
-      svgContent = svgContent.replace(/<!DOCTYPE[^>]*>/gi, '');
-
-      // Remove redundant attributes (e.g., default values), but keep width and height attributes
-      svgContent = svgContent.replace(/\s*(?:x="0"|y="0")/gi, '');
-
-      // Remove unnecessary units (e.g., px)
-      svgContent = svgContent.replace(/(\d+)px/gi, '$1');
-
-      // Restore href and animate attributes
-      svgContent = svgContent.replace(/___HREF_PLACEHOLDER_(\d+)___/g, function (match, index) {
+      optimized = optimized.replace(/>\s+</g, "><").trim();
+      optimized = optimized.replace(/<!--[\s\S]*?-->/g, "");
+      optimized = optimized.replace(/[\r\n\t]+/g, "");
+      optimized = optimized.replace(/ {2,}/g, " ");
+      optimized = optimized.replace(/<\?xml[\s\S]*?\?>/gi, "");
+      optimized = optimized.replace(/<!DOCTYPE[^>]*>/gi, "");
+      optimized = optimized.replace(/(\d+)px/gi, "$1");
+      optimized = optimized.replace(/___HREF_PLACEHOLDER_(\d+)___/g, function (match, index) {
         return hrefMatches[index];
       });
-
-      svgContent = svgContent.replace(/___ANIMATE_PLACEHOLDER_(\d+)___/g, function (match, index) {
+      optimized = optimized.replace(/___ANIMATE_PLACEHOLDER_(\d+)___/g, function (match, index) {
         return animateMatches[index];
       });
-
-      outputSvg.value = svgContent;
-
-      // Update file size info
-      updateFileSizeInfo(svgContent);
+      return optimized;
     }
-
-    // Update File Size Info
+    
+    // Update file size info for SVG
     function updateFileSizeInfo(svgContent) {
-      const sizeInBytes = new Blob([svgContent], { type: 'image/svg+xml' }).size;
-      const sizeInKB = (sizeInBytes / 1024).toFixed(2);
-      fileSizeInfo.textContent = `Estimated SVG File Size: ${sizeInKB} KB`;
+      var sizeInBytes = new Blob([svgContent], { type: "image/svg+xml" }).size;
+      var sizeInKB = (sizeInBytes / 1024).toFixed(2);
+      fileSizeInfo.textContent = "Estimated SVG File Size: " + sizeInKB + " KB";
     }
-
-    // Copy Function
+    
+    // Copy SVG code to clipboard
     function copyToClipboard(textarea) {
       textarea.select();
-      textarea.setSelectionRange(0, 99999); // For mobile devices
-      document.execCommand('copy'); // Use execCommand for better compatibility
-      alert('SVG code copied to clipboard.');
+      textarea.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      alert("SVG code copied to clipboard.");
     }
-
-    // Event Listeners
-    updateFramesButton.addEventListener('click', initializeFrames);
-    numFramesInput.addEventListener('change', initializeFrames);
-
-    animationDurationInput.addEventListener('input', function () {
+    
+    // Enhanced download using a Data URI for broader compatibility
+    function downloadSVG() {
+      var svgContent = outputSvg.value;
+      var encodedSvg = encodeURIComponent(svgContent);
+      var dataUri = "data:image/svg+xml;charset=utf-8," + encodedSvg;
+      var link = document.createElement("a");
+      link.href = dataUri;
+      link.download = "animated.svg";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    
+    // Copy SVG Data URI to clipboard
+    function copyDataUri() {
+      var svgContent = outputSvg.value;
+      var encodedSvg = encodeURIComponent(svgContent);
+      var dataUri = "data:image/svg+xml;charset=utf-8," + encodedSvg;
+      var dummyInput = document.createElement("input");
+      document.body.appendChild(dummyInput);
+      dummyInput.value = dataUri;
+      dummyInput.select();
+      dummyInput.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      document.body.removeChild(dummyInput);
+      alert("SVG Data URI copied to clipboard.");
+    }
+    
+    // Reset the entire form to default settings
+    function resetForm() {
+      numFramesInput.value = 4;
+      animationDurationInput.value = 3;
+      compressionLevelInput.value = 256;
+      advancedOptCheckbox.checked = false;
+      scalingSelect.value = "pixelated";
+      initializeFrames();
+    }
+    
+    // Event listeners
+    updateFramesButton.addEventListener("click", initializeFrames);
+    resetFormButton.addEventListener("click", resetForm);
+    numFramesInput.addEventListener("change", initializeFrames);
+    animationDurationInput.addEventListener("input", function () {
       if (frameData.length > 1) {
-        // Update individual frame durations proportionally
-        const numFrames = frameData.length;
-        const newTotalDuration = parseFloat(animationDurationInput.value);
-        const defaultFrameDuration = (newTotalDuration / numFrames).toFixed(2);
-        document.querySelectorAll('.frame-item input[type="number"]').forEach((input, index) => {
+        var numFrames = frameData.length;
+        var newTotalDuration = parseFloat(animationDurationInput.value);
+        var defaultFrameDuration = (newTotalDuration / numFrames).toFixed(2);
+        document.querySelectorAll(".frame-item input[type='number']").forEach(function (input, index) {
           input.value = defaultFrameDuration;
           frameData[index].duration = parseFloat(input.value);
         });
       }
     });
-
-    compressionLevelInput.addEventListener('input', function () {
-      // Validate input
-      let value = parseInt(compressionLevelInput.value);
-      if (isNaN(value) || value < 2) {
-        value = 2;
-      } else if (value > 256) {
-        value = 256;
-      }
+    compressionLevelInput.addEventListener("input", function () {
+      var value = parseInt(compressionLevelInput.value);
+      if (isNaN(value) || value < 2) value = 2;
+      else if (value > 256) value = 256;
       compressionLevelInput.value = value;
-
-      // Recompress sprite sheet if already generated
       if (isUsingSpriteSheet && spriteSheetCanvas) {
         compressSpriteSheet(spriteSheetCanvas);
-        // Regenerate the SVG
         generateSpriteSheetSVG();
       }
     });
-
-    generateSvgButton.addEventListener('click', generateSVG);
-
-    compressSvgButton.addEventListener('click', compressSVG);
-
-    copySvgButton.addEventListener('click', function () {
+    generateSvgButton.addEventListener("click", generateSVG);
+    compressSvgButton.addEventListener("click", function () {
+      var svgContent = outputSvg.value;
+      setSVGOutput(optimizeSVG(svgContent));
+    });
+    copySvgButton.addEventListener("click", function () {
       copyToClipboard(outputSvg);
     });
-
-    downloadSvgButton.addEventListener('click', function () {
-      const svgContent = outputSvg.value;
-      const blob = new Blob([svgContent], { type: 'image/svg+xml' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'animated.svg';
-      link.click();
-    });
-
-    batchUploadButton.addEventListener('click', batchUploadImages);
-    uploadGifButton.addEventListener('click', uploadGif);
-
-    // Initialize
+    downloadSvgButton.addEventListener("click", downloadSVG);
+    copyDataUriButton.addEventListener("click", copyDataUri);
+    batchUploadButton.addEventListener("click", batchUploadImages);
+    uploadGifButton.addEventListener("click", uploadGif);
+    
+    // Initialize on page load
     initializeFrames();
   </script>
-
 </body>
 </html>
