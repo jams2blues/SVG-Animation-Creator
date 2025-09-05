@@ -7,37 +7,174 @@
 
   <!-- ─── Styles ─────────────────────────────────────────────────────────────── -->
   <style>
-    :root{
-      --bg:#1e1e1e;--fg:#ffffff;--accent:#ff4040;--border:#555;--yellow:#ffeb3b
+    /*
+     * Theme integration
+     * When plugged into Zero Unbound, these variables are provided by the host. Fallbacks below emulate
+     * the terminal‑dark palette defined in palettes.json. Colours cascade from these variables
+     * so overriding --zu-* on the host page automatically updates this tool (I00, I06).
+     */
+    :root {
+      /* Fallback palette (terminal‑dark) – used when not attached to the main app */
+      --zu-bg: #0b0e14;
+      --zu-bg-alt: #14171d;
+      --zu-fg: #c3c7cb;
+      --zu-heading: #ffffff;
+      --zu-accent: #50fa7b;
+      --zu-accent-hover: #77ff9a;
+      --zu-accent-sec: #8be9fd;
+      --zu-accent-sec-hover: #b1f0ff;
+      --zu-btn-fg: #000000;
+      /* Font stacks (I00): prefer Pixeloid when available, fall back gracefully */
+      --ui-font: 'PixeloidSans', 'PixeloidSansBold', 'Pixeloid Sans', -apple-system, system-ui, 'Segoe UI', Arial, sans-serif;
+      --mono-font: 'PixeloidMono', 'Pixeloid Mono', 'Courier New', monospace;
     }
-    *,*:before,*:after{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:Arial,Helvetica,sans-serif}
-    h1{text-align:center;margin:0 0 1rem}
-    h2{margin:0 0 .5rem;font-size:1.25rem}
-    .container{max-width:820px;margin:0 auto;padding:0 10px}
-    .section{margin:1.5rem 0}
-    label{display:block;margin:.5rem 0 .25rem}
-    input[type="number"],input[type="text"],select,textarea{
-      width:100%;padding:.5rem;background:#333;border:1px solid var(--border);color:var(--fg);
-      border-radius:4px;font-size:1rem;resize:vertical;transition:border-color .2s
+    /* Embed minimal subsets of our pixel fonts so the tool works offline.
+     * These data URIs are small (≈4 kB each) and include only basic ASCII glyphs.
+     * When plugged into Zero Unbound (where full fonts are already loaded), the
+     * host page’s font‑face declarations override these definitions. (I00)
+     */
+    @font-face {
+      font-family: 'PixeloidSans';
+      src: url("data:font/woff;base64,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");
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
     }
-    input[type="file"]{width:100%;margin:.25rem 0}
-    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
-    button{
-      display:inline-block;width:100%;padding:.65rem;background:var(--accent);color:#fff;border:none;
-      border-radius:4px;font-size:1rem;margin:.25rem 0;cursor:pointer;transition:background .2s
+    @font-face {
+      font-family: 'PixeloidSans';
+      src: url("data:font/woff;base64,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");
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
     }
-    button:disabled{opacity:.45;cursor:not-allowed}
-    button:not(:disabled):hover{background:#d53636}
-    .frame-item{
-      border:1px solid var(--border);background:#262626;border-radius:4px;padding:10px;margin:.5rem 0
+    @font-face {
+      font-family: 'PixeloidMono';
+      src: url("data:font/woff;base64,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");
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
     }
-    #status-message{color:var(--yellow);margin:.5rem 0}
-    #preview-container svg{max-width:100%;height:auto;display:block;margin:1rem auto}
-    #file-size-info{margin-top:.5rem;font-weight:bold}
-
+    /* Map our local variables to the global Zero Unbound palette. If the host page defines
+     * these variables then they override our fallbacks. */
+    :root {
+      --bg: var(--zu-bg);
+      --bg-alt: var(--zu-bg-alt);
+      --fg: var(--zu-fg);
+      --heading: var(--zu-heading);
+      --accent: var(--zu-accent);
+      --accent-hover: var(--zu-accent-hover);
+      --accent-sec: var(--zu-accent-sec);
+      --border: var(--zu-bg-alt);
+      --warning: #ffeb3b;
+    }
+    *,*::before,*::after { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+      /* Use our 8‑bit pixel stack by default; host can override via CSS vars */
+      font-family: var(--ui-font);
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    h1 {
+      text-align: center;
+      margin: 0 0 1rem;
+      color: var(--heading);
+      font-weight: 700;
+      font-size: 1.75rem;
+    }
+    h2 {
+      margin: 0 0 .5rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+    h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--heading);
+    }
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 10px;
+    }
+    .section { margin: 1.5rem 0; }
+    label {
+      display: block;
+      margin: .5rem 0 .25rem;
+      font-weight: 500;
+    }
+    input[type="number"], input[type="text"], select, textarea {
+      width: 100%;
+      padding: .5rem;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      border-radius: 4px;
+      font-size: 1rem;
+      resize: vertical;
+      transition: border-color .2s;
+    }
+    /* Display generated SVG as pixel-mono for the code area */
+    textarea#output-svg { font-family: var(--mono-font); }
+    input[type="file"] {
+      width: 100%;
+      margin: .25rem 0;
+      color: var(--fg);
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    button {
+      display: inline-block;
+      width: 100%;
+      padding: .65rem;
+      background: var(--accent);
+      color: var(--zu-btn-fg, #ffffff);
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      margin: .25rem 0;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+    button:not(:disabled):hover {
+      background: var(--accent-hover);
+    }
+    .frame-item {
+      border: 1px solid var(--border);
+      background: var(--bg-alt);
+      border-radius: 4px;
+      padding: 10px;
+      margin: .5rem 0;
+    }
+    #status-message {
+      color: var(--warning);
+      margin: .5rem 0;
+    }
+    #preview-container svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 1rem auto;
+    }
+    #file-size-info {
+      margin-top: .5rem;
+      font-weight: bold;
+    }
     /* Firefox tweak for file inputs */
-    @-moz-document url-prefix(){input[type="file"]{padding:.5rem .4rem}}
+    @-moz-document url-prefix() {
+      input[type="file"] { padding: .5rem .4rem; }
+    }
   </style>
 
  <script>
@@ -79,6 +216,9 @@
       <div id="animation-duration-container">
         <label for="animation-duration">Total Duration (sec)</label>
         <input id="animation-duration" type="number" min=".1" step=".1" value="3"/>
+        <label style="margin-top:.5rem;display:flex;align-items:center;gap:.5rem">
+          <input id="normalize-gif" type="checkbox" style="width:auto"> Normalize GIF timings to Total Duration
+        </label>
       </div>
 
       <label for="scaling">Scaling</label>
@@ -88,7 +228,8 @@
       </select>
 
       <label for="compression-level">Compression Colors</label>
-      <input id="compression-level" type="number" min="2" max="256" step="1" value="64"/>
+      <!-- Set default compression palette to 256 colours to preserve fidelity (I00). -->
+      <input id="compression-level" type="number" min="2" max="256" step="1" value="256"/>
 
       <button id="update-frames">Update Frames</button>
     </div>
@@ -131,6 +272,7 @@
       numFrames: $('num-frames'),
       animDur: $('animation-duration'),
       animWrap: $('animation-duration-container'),
+      normGIF: $('normalize-gif'),
       scaleSel: $('scaling'),
       compInp: $('compression-level'),
       updateBtn: $('update-frames'),
@@ -153,7 +295,43 @@
 
     /* Utils */
     const blobKB = s => (new Blob([s]).size/1024).toFixed(2);
-    const toB64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+    const dataUriKB = (uri)=>{
+      if(!uri?.startsWith('data:')) return 0;
+      const comma = uri.indexOf(',');
+      const b64 = uri.slice(comma+1);
+      const bytes = Math.floor(b64.length * 3/4);
+      return (bytes/1024).toFixed(2);
+    };
+    // Safe base64 encoder for large ArrayBuffers/Uint8Arrays (avoids argument explosion)
+    const toB64 = (buf)=>{
+      const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
+      const chunk = 0x8000; // 32K chars per chunk
+      const parts = [];
+      for(let i=0;i<bytes.length;i+=chunk){
+        const sub = bytes.subarray(i,i+chunk);
+        // Build a small string for this chunk without spread/apply
+        let s = '';
+        for(let j=0;j<sub.length;j++) s += String.fromCharCode(sub[j]);
+        parts.push(s);
+      }
+      return btoa(parts.join(''));
+    };
+
+    // Layout planner to keep sheet within safe canvas limits
+    const MAX_DIM = 16384; // conservative for Safari/Canvas
+    const planSheetLayout = (count, cellW, cellH)=>{
+      // Max columns by width; ensure >=1
+      const maxCols = Math.max(1, Math.floor(MAX_DIM / Math.max(1, cellW)));
+      let cols = Math.min(count, maxCols);
+      let rows = Math.ceil(count / cols);
+      const maxRows = Math.max(1, Math.floor(MAX_DIM / Math.max(1, cellH)));
+      if(rows > maxRows){
+        rows = maxRows;
+        cols = Math.min(maxCols, Math.ceil(count / rows));
+      }
+      const capacity = cols * rows;
+      return { cols, rows, capacity };
+    };
 
     /* Frame list creation */
     const initFrames = () => {
@@ -212,8 +390,17 @@
         if(!mime)return alert('Unsupported image');
         frames[idx].img=res.split(',')[1];
         frames[idx].mime=mime;
+        // record individual dimensions for this frame; update global max dims
         const img=new Image();
-        img.onload=()=>{w=img.width;h=img.height;};
+        img.onload=()=>{
+          frames[idx].w = img.width;
+          frames[idx].h = img.height;
+          // compute maximum width/height across all loaded frames
+          const widths = frames.map(f=>f.w||0);
+          const heights = frames.map(f=>f.h||0);
+          w = Math.max(...widths);
+          h = Math.max(...heights);
+        };
         img.src=res;
       };
       rd.readAsDataURL(file);
@@ -238,33 +425,65 @@
           const buf=new Uint8Array(e.target.result);
           const reader=new GifReader(buf);
           const n=reader.numFrames();
-          w=reader.width; h=reader.height;
+          // GIF frames share a common width/height; assign per-frame and update global
+          w = reader.width; h = reader.height;
           els.numFrames.value=n;
           initFrames();
+
+          // Plan a layout that stays within canvas limits
+          const { cols, rows, capacity } = planSheetLayout(n, w, h);
+          let useFrames = Math.min(n, capacity);
+          if(capacity < n){
+            els.status.textContent = `GIF processed with ${useFrames}/${n} frames (canvas limit).`;
+            frames = frames.slice(0, useFrames);
+          }
+
           sheetCanvas=document.createElement('canvas');
-          sheetCanvas.width=w*n; sheetCanvas.height=h;
-          const ctx=sheetCanvas.getContext('2d');
+          sheetCanvas.width=w*cols; sheetCanvas.height=h*rows;
+          const ctx=sheetCanvas.getContext('2d', { willReadFrequently: true });
           const tmp=document.createElement('canvas'); tmp.width=w; tmp.height=h;
-          const tctx=tmp.getContext('2d');
+          const tctx=tmp.getContext('2d', { willReadFrequently: true });
           let prev=tctx.createImageData(w,h);
-          for(let i=0;i<n;i++){
+          let totalDur = 0;
+          for(let i=0;i<useFrames;i++){
             const info=reader.frameInfo(i);
             tctx.putImageData(prev,0,0); // base
             const imgData=tctx.getImageData(0,0,w,h);
             reader.decodeAndBlitFrameRGBA(i,imgData.data);
             tctx.putImageData(imgData,0,0);
-            ctx.drawImage(tmp,w*i,0);
-            frames[i].dur=(info.delay||10)/100;
-            frames[i].rect={x:w*i,y:0,w:w,h:h}; // FIX width assignment
+            const cx = (i % cols) * w;
+            const cy = Math.floor(i / cols) * h;
+            ctx.drawImage(tmp,cx,cy);
+            // record original frame size; GIF frames are uniform but we store anyway
+            frames[i].w = info.width;
+            frames[i].h = info.height;
+            const d = (info.delay||10)/100; // seconds
+            frames[i].dur=d; totalDur += d;
+            frames[i].rect={x:cx,y:cy,w:w,h:h};
             switch(info.disposal){
               case 2:tctx.clearRect(info.x,info.y,info.width,info.height);break;
               case 3:tctx.putImageData(prev,0,0);break;
             }
             prev=tctx.getImageData(0,0,w,h);
           }
+
+          // Optional normalization: scale GIF timings to fit Total Duration
+          if(els.normGIF && els.normGIF.checked && useFrames>1){
+            const target = Math.max(0.0001, +els.animDur.value || 3);
+            const k = totalDur>0 ? (target/totalDur) : 1;
+            for(let i=0;i<useFrames;i++) frames[i].dur = Math.max(0.0001, frames[i].dur*k);
+          }
+
+          // Sync duration inputs with current frame durations (first useFrames frames)
+          for(let i=0;i<useFrames;i++){
+            const durInp = els.framesList.querySelector(`[data-dur="${i}"]`);
+            if(durInp) durInp.value = (+frames[i].dur).toFixed(2);
+          }
+
           compressSheet();
           usingSheet=true;
-          els.status.textContent='GIF processed.';
+          const pngKB = dataUriKB(sheetURL);
+          els.status.textContent=`GIF processed. Sheet ${sheetCanvas.width}×${sheetCanvas.height}px · PNG ${pngKB} KB`;
         }catch(err){
           els.status.textContent='GIF error: '+err.message;
         }
@@ -276,7 +495,7 @@
     const compressSheet = ()=>{
       const level = +els.compInp.value||256;
       const {width,height}=sheetCanvas;
-      const buf=sheetCanvas.getContext('2d').getImageData(0,0,width,height).data.buffer;
+      const buf=sheetCanvas.getContext('2d', { willReadFrequently: true }).getImageData(0,0,width,height).data.buffer;
       const png=UPNG.encode([buf],width,height,0,[],{cnum:level});
       sheetURL='data:image/png;base64,'+toB64(png);
     };
@@ -291,16 +510,20 @@
       const n=frames.length;
       const total=n===1?0.0001:frames.reduce((s,f)=>s+f.dur,0);
       if(total<=0){return alert('Frame durations sum to 0');}
-      const values=frames.map(f=>-f.rect.x).concat(-frames[0].rect.x).join(';');
+      const valuesX=frames.map(f=>-f.rect.x).concat(-frames[0].rect.x).join(';');
+      const valuesY=frames.map(f=>-f.rect.y).concat(-frames[0].rect.y).join(';');
       const keyTimesArr=[0];
       let c=0;
       frames.forEach(f=>{c+=f.dur; keyTimesArr.push((c/total).toFixed(4));});
       const keyTimes=keyTimesArr.join(';');
 
+      const sheetW = (sheetCanvas && sheetCanvas.width) ? sheetCanvas.width : (w*n);
+      const sheetH = (sheetCanvas && sheetCanvas.height) ? sheetCanvas.height : h;
       const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" overflow="hidden">
   <defs><clipPath id="clip"><rect width="${w}" height="${h}"/></clipPath></defs>
-  <image href="${sheetURL}" width="${w*n}" height="${h}" clip-path="url(#clip)" style="image-rendering:${els.scaleSel.value}" x="0" y="0">
-    <animate attributeName="x" values="${values}" keyTimes="${keyTimes}" dur="${total.toFixed(4)}s" calcMode="discrete" repeatCount="indefinite"/>
+  <image href="${sheetURL}" width="${sheetW}" height="${sheetH}" clip-path="url(#clip)" style="image-rendering:${els.scaleSel.value}" x="0" y="0">
+    <animate attributeName="x" values="${valuesX}" keyTimes="${keyTimes}" dur="${total.toFixed(4)}s" calcMode="discrete" repeatCount="indefinite"/>
+    <animate attributeName="y" values="${valuesY}" keyTimes="${keyTimes}" dur="${total.toFixed(4)}s" calcMode="discrete" repeatCount="indefinite"/>
   </image>
 </svg>`;
       els.outTA.value=svg.trim();
@@ -310,19 +533,46 @@
     };
 
     const buildSheetFromUploads = cb=>{
-      const n=frames.length;
-      sheetCanvas=document.createElement('canvas');
-      sheetCanvas.width=w*n; sheetCanvas.height=h;
-      const ctx=sheetCanvas.getContext('2d');
-      let loaded=0;
-      frames.forEach((f,i)=>{
-        const img=new Image();
-        img.onload=()=>{
-          ctx.drawImage(img,w*i,0);
-          frames[i].rect={x:w*i,y:0,w:w,h:h};
-          if(++loaded===n){compressSheet();usingSheet=true;cb();}
+      const n = frames.length;
+      // determine maximum frame dimensions across uploads
+      const maxW = Math.max(...frames.map(f => f.w || 0));
+      const maxH = Math.max(...frames.map(f => f.h || 0));
+      // update global dimensions
+      w = maxW;
+      h = maxH;
+      // Plan layout to fit within canvas limits
+      const { cols, rows, capacity } = planSheetLayout(n, maxW, maxH);
+      const useFrames = Math.min(n, capacity);
+      if(capacity < n){
+        els.numFrames.value = useFrames;
+        frames = frames.slice(0, useFrames);
+        els.status.textContent = `Using ${useFrames}/${n} frames (canvas limit).`;
+      }
+      sheetCanvas = document.createElement('canvas');
+      sheetCanvas.width = maxW * cols;
+      sheetCanvas.height = maxH * rows;
+      const ctx = sheetCanvas.getContext('2d', { willReadFrequently: true });
+      let loaded = 0;
+      frames.slice(0,useFrames).forEach((f,i)=>{
+        const img = new Image();
+        img.onload = () => {
+          const fw = f.w || img.width;
+          const fh = f.h || img.height;
+          // calculate offsets to center each image in its frame cell
+          const xOff = (maxW - fw) / 2;
+          const yOff = (maxH - fh) / 2;
+          const cx = (i % cols) * maxW;
+          const cy = Math.floor(i / cols) * maxH;
+          ctx.drawImage(img, cx + xOff, cy + yOff, fw, fh);
+          // record the rect representing this frame's cell
+          frames[i].rect = { x: cx, y: cy, w: maxW, h: maxH };
+          if(++loaded === useFrames){
+            compressSheet();
+            usingSheet = true;
+            cb();
+          }
         };
-        img.src=`data:${f.mime};base64,${f.img}`;
+        img.src = `data:${f.mime};base64,${f.img}`;
       });
     };
 
@@ -339,7 +589,16 @@
     };
 
     /* Clipboard & download */
-    const copy = ()=>{els.outTA.select();document.execCommand('copy');};
+    const copy = async ()=>{
+      try{
+        if(navigator.clipboard && window.isSecureContext){
+          await navigator.clipboard.writeText(els.outTA.value);
+        }else{
+          els.outTA.select();document.execCommand('copy');
+        }
+        els.status.textContent='SVG copied to clipboard.';
+      }catch(e){ els.status.textContent='Copy failed: '+e.message; }
+    };
     els.copyBtn.onclick=copy;
     els.dlBtn.onclick=()=>{
       const blob=new Blob([els.outTA.value],{type:'image/svg+xml'});
@@ -352,7 +611,9 @@
     els.numFrames.onchange=initFrames;
     els.animDur.oninput=()=>{
       const n=frames.length;
-      if(n>1){
+      // Only auto-distribute durations when not using a GIF sheet,
+      // or when GIF normalization is enabled.
+      if(n>1 && (!usingSheet || (els.normGIF && els.normGIF.checked))){
         const d=(+els.animDur.value/n).toFixed(2);
         [...els.framesList.querySelectorAll('[data-dur]')].forEach((el,i)=>{el.value=d;frames[i].dur=+d;});
       }
@@ -363,6 +624,22 @@
     };
     els.genBtn.onclick=generateSVG;
     els.cmpBtn.onclick=compressSVG;
+    if(els.normGIF){
+      els.normGIF.onchange = ()=>{
+        if(usingSheet && frames.length>1 && els.normGIF.checked){
+          const target = Math.max(0.0001, +els.animDur.value || 3);
+          const sum = frames.reduce((s,f)=>s+Math.max(0.0001,+f.dur||0),0);
+          if(sum>0){
+            frames.forEach((f,i)=>{
+              f.dur = Math.max(0.0001, (f.dur/sum)*target);
+              const durInp = els.framesList.querySelector(`[data-dur="${i}"]`);
+              if(durInp) durInp.value = (+f.dur).toFixed(2);
+            });
+            generateSVG();
+          }
+        }
+      };
+    }
     els.batchBtn.onclick=()=>{
       const inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.multiple=true;
       inp.onchange=e=>{
@@ -372,12 +649,24 @@
         els.numFrames.value=files.length;initFrames();
         const d=(+els.animDur.value/files.length).toFixed(2);
         files.forEach((file,i)=>{
-          const rd=new FileReader();
-          rd.onload=()=>{
-            const [,mime]=/^data:(image\/[^;]+);base64,/i.exec(rd.result)||[];
-            frames[i].img=rd.result.split(',')[1];frames[i].mime=mime;frames[i].dur=+d;
-            const img=new Image();img.onload=()=>{w=img.width;h=img.height;};img.src=rd.result;
-            const durInp=els.framesList.querySelector(`[data-dur="${i}"]`);if(durInp)durInp.value=d;
+          const rd = new FileReader();
+          rd.onload = () => {
+            const dataURL = rd.result;
+            const match = /^data:(image\/[^;]+);base64,/i.exec(dataURL) || [];
+            const mime = match[1] || '';
+            frames[i].img = dataURL.split(',')[1];
+            frames[i].mime = mime;
+            // For single-image batches assign a tiny duration so animations don't skew keyTimes
+            frames[i].dur = files.length === 1 ? 0.0001 : +d;
+            // Load image to capture intrinsic dimensions for each frame
+            const img = new Image();
+            img.onload = () => {
+              frames[i].w = img.width;
+              frames[i].h = img.height;
+            };
+            img.src = dataURL;
+            const durInp = els.framesList.querySelector(`[data-dur="${i}"]`);
+            if (durInp) durInp.value = d;
           };
           rd.readAsDataURL(file);
         });
